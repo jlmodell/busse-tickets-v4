@@ -10,27 +10,34 @@ export const authOptions: NextAuthOptions = {
       server: {
         host: process.env.NODEMAILER_HOST,
         port: process.env.NODEMAILER_PORT,
+        secure: false,
+        tls: {
+          ciphers: "SSLv3",
+          rejectUnauthorized: false,
+        },
         auth: {
           user: process.env.NODEMAILER_USER,
           pass: process.env.NODEMAILER_PASSWORD,
         },
       },
       from: process.env.NODEMAILER_USER,
-      normalizeIdentifier(identifier: string): string {
-        // You can also throw an error, which will redirect the user
-        // to the error page with error=EmailSignin in the URL
-        if (identifier.split("@").length > 2) {
-          throw new Error("Only one email allowed");
-        }
+      maxAge: 24 * 60 * 60, // 24 hours
 
-        // Get the first two elements only,
-        // separated by `@` from user input.
-        let [local, domain] = identifier.toLowerCase().trim().split("@");
-        // The part before "@" can contain a ","
-        // but we remove it on the domain part
-        domain = domain.split(",")[0];
-        return `${local}@${domain}`;
-      },
+      // normalizeIdentifier(identifier: string): string {
+      //   // You can also throw an error, which will redirect the user
+      //   // to the error page with error=EmailSignin in the URL
+      //   if (identifier.split("@").length > 2) {
+      //     throw new Error("Only one email allowed");
+      //   }
+
+      //   // Get the first two elements only,
+      //   // separated by `@` from user input.
+      //   let [local, domain] = identifier.toLowerCase().trim().split("@");
+      //   // The part before "@" can contain a ","
+      //   // but we remove it on the domain part
+      //   domain = domain.split(",")[0];
+      //   return `${local}@${domain}`;
+      // },
     }),
   ],
 
