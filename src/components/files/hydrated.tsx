@@ -23,11 +23,7 @@ import DownloadIcon from "./download";
 
 const columnHelper = createColumnHelper<FileList>();
 
-export default function ListOfFilesTableRenderer({
-  data,
-}: {
-  data: FileList[];
-}) {
+const ListOfFilesTableRenderer = ({ data }: { data: FileList[] }) => {
   const initialState = {
     data: [...data],
     filter: "",
@@ -207,4 +203,6 @@ export default function ListOfFilesTableRenderer({
       </div>
     </div>
   );
-}
+};
+
+export default ListOfFilesTableRenderer;

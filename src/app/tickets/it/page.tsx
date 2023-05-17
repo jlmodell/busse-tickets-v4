@@ -3,7 +3,7 @@ import TableRenderer from "@/components/tickets/hydrated";
 import getBaseUrl from "@/lib/baseURL";
 import { Suspense } from "react";
 
-async function getData() {
+const getData = async () => {
   const url = new URL(`${getBaseUrl()}/api/tickets`);
   url.searchParams.append("type", "it");
 
@@ -14,9 +14,9 @@ async function getData() {
   if (!res.ok) throw new Error("Failed to fetch data");
 
   return res.json();
-}
+};
 
-export default async function TicketsITDashboard() {
+const TicketsITDashboard = async () => {
   const { tickets } = (await getData()) as { count: number; tickets: Ticket[] };
 
   return (
@@ -26,4 +26,6 @@ export default async function TicketsITDashboard() {
       </Suspense>
     </div>
   );
-}
+};
+
+export default TicketsITDashboard;

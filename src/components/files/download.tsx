@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-export default function DownloadIcon({ className }: { className?: string }) {
+const DownloadIcon = ({ className }: { className?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -17,4 +17,6 @@ export default function DownloadIcon({ className }: { className?: string }) {
       />
     </svg>
   );
-}
+};
+
+export default DownloadIcon;

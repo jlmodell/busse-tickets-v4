@@ -23,7 +23,7 @@ import { type Ticket } from "@/types/ticket.type";
 
 const columnHelper = createColumnHelper<Ticket>();
 
-export default function TableRenderer({ data }: { data: Ticket[] }) {
+const TableRenderer = ({ data }: { data: Ticket[] }) => {
   const initialState = {
     data: [...data],
     filter: "",
@@ -225,4 +225,6 @@ export default function TableRenderer({ data }: { data: Ticket[] }) {
       </div>
     </div>
   );
-}
+};
+
+export default TableRenderer;
