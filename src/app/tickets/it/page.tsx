@@ -1,5 +1,5 @@
 import { type Ticket } from "@/types/ticket.type";
-import TableRenderer from "../components/table/hydrated";
+import TableRenderer from "@/components/tickets/hydrated";
 import getBaseUrl from "@/lib/baseURL";
 
 async function getData() {

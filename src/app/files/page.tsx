@@ -1,8 +1,9 @@
 import { getCurrentUser } from "@/lib/session";
-import ListOfFiles from "./components/hydrated";
+import ListOfFiles from "@/components/files/hydrated";
 import { type FileList } from "@/types/file.type";
 import { redirect } from "next/navigation";
 import getBaseUrl from "@/lib/baseURL";
+import { Suspense } from "react";
 
 async function getData<T>() {
   const user = "jmodell@busseinc.com";
@@ -35,7 +36,9 @@ export default async function FilesDashboard() {
 
   return (
     <div className="flex flex-col gap-y-2">
-      <ListOfFiles data={fileList as unknown as FileList[]} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ListOfFiles data={fileList as unknown as FileList[]} />
+      </Suspense>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/app/tickets/components/table";
+} from "@/components/table";
 
 import {
   createColumnHelper,

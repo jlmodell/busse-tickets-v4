@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import Submit from "./components/submit";
+import Submit from "@/components/mainpage/submit";
 
 import {
   type S3File,
