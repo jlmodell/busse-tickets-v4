@@ -1,5 +1,7 @@
+import { getCurrentUser } from "@/lib/session";
 import ListOfFiles from "./components/hydrated";
 import { type FileList } from "@/types/file.type";
+import { redirect } from "next/navigation";
 
 async function getData<T>() {
   const user = "jmodell@busseinc.com";
@@ -17,6 +19,10 @@ async function getData<T>() {
 }
 
 export default async function FilesDashboard() {
+  const user = await getCurrentUser();
+
+  if (!user) redirect("/api/auth/signin?callbackUrl=/files");
+
   const filesArray = await getData<string[]>();
 
   const fileList = filesArray.map((file) => {

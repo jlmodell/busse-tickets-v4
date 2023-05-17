@@ -1,4 +1,4 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import { type NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 
@@ -44,7 +44,3 @@ export const authOptions: NextAuthOptions = {
 
   adapter: MongoDBAdapter(clientPromise),
 };
-
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
