@@ -2,11 +2,12 @@ import { getCurrentUser } from "@/lib/session";
 import ListOfFiles from "./components/hydrated";
 import { type FileList } from "@/types/file.type";
 import { redirect } from "next/navigation";
+import getBaseUrl from "@/lib/baseURL";
 
 async function getData<T>() {
   const user = "jmodell@busseinc.com";
 
-  const url = new URL("/api/files/list");
+  const url = new URL(`${getBaseUrl()}/api/files/list`);
   url.searchParams.append("prefix", encodeURI(user));
 
   const res = await fetch(url.href, {
@@ -26,7 +27,7 @@ export default async function FilesDashboard() {
   const filesArray = await getData<string[]>();
 
   const fileList = filesArray.map((file) => {
-    const url = new URL("/api/files/download");
+    const url = new URL(`${getBaseUrl()}/api/files/download`);
     url.searchParams.append("key", encodeURI(file));
 
     return { key: file, url: url.href, filename: file.split("/").pop() };

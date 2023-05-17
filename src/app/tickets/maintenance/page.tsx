@@ -1,8 +1,9 @@
 import { type Ticket } from "@/types/ticket.type";
 import TableRenderer from "../components/table/hydrated";
+import getBaseUrl from "@/lib/baseURL";
 
 async function getData() {
-  const url = new URL("/api/tickets");
+  const url = new URL(`${getBaseUrl()}/api/tickets`);
   url.searchParams.append("type", "maintenance");
 
   const res = await fetch(url, {
