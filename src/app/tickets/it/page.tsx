@@ -2,7 +2,7 @@ import { type Ticket } from "@/types/ticket.type";
 import TableRenderer from "../components/table/hydrated";
 
 async function getData() {
-  const url = new URL("http://localhost:3000/api/tickets");
+  const url = new URL("/api/tickets");
   url.searchParams.append("type", "it");
 
   const res = await fetch(url.href, {

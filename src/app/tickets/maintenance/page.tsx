@@ -2,10 +2,12 @@ import { type Ticket } from "@/types/ticket.type";
 import TableRenderer from "../components/table/hydrated";
 
 async function getData() {
-  const url = new URL("http://localhost:3000/api/tickets");
+  const url = new URL("/api/tickets");
   url.searchParams.append("type", "maintenance");
 
-  const res = await fetch(url, { next: { tags: ["maintenance-tickets"] } });
+  const res = await fetch(url, {
+    next: { tags: ["maintenance-tickets"], revalidate: 60 },
+  });
 
   if (!res.ok) throw new Error("Failed to fetch data");
 
