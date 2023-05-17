@@ -1,9 +1,11 @@
 import Link from "next/link";
-import NavigationLinks from "../../components/mainpage/navigation";
+
 import "./globals.css";
 import { Inter } from "next/font/google";
-import SignInButton from "../../components/mainpage/signin";
-import Provider from "../../components/mainpage/sessionprovider";
+
+import NavigationLinks from "@/components/mainpage/navigation";
+import SignInButton from "@/components/mainpage/signin";
+import Provider from "@/components/mainpage/sessionprovider";
 
 const inter = Inter({ subsets: ["latin"] });
 
