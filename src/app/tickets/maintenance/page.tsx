@@ -1,23 +1,30 @@
 import { type Ticket } from "@/types/ticket.type";
 import TableRenderer from "@/components/tickets/hydrated";
-import getBaseUrl from "@/lib/baseURL";
+// import getBaseUrl from "@/lib/baseURL";
 import { Suspense } from "react";
+import { getTickets } from "@/lib/server/getTickets";
 
-const getData = async () => {
-  const url = new URL(`${getBaseUrl()}/api/tickets`);
-  url.searchParams.append("type", "maintenance");
+export const revalidate = 30;
 
-  const res = await fetch(url, {
-    next: { tags: ["maintenance-tickets"], revalidate: 60 },
+const getData = async (type: "it" | "maintenance") => {
+  // const url = new URL(`${getBaseUrl()}/api/tickets`);
+  // url.searchParams.append("type", "maintenance");
+
+  // const res = await fetch("/api/tickets?type=maintenance", {
+  //   next: { tags: ["maintenance-tickets"], revalidate: 60 },
+  // });
+
+  // if (!res.ok) throw new Error("Failed to fetch data");
+
+  // return res.json();
+
+  return getTickets({
+    type,
   });
-
-  if (!res.ok) throw new Error("Failed to fetch data");
-
-  return res.json();
 };
 
 const TicketsMaintenanceDashboard = async () => {
-  const { tickets } = (await getData()) as { count: number; tickets: Ticket[] };
+  const tickets = (await getData("it")) as Ticket[];
 
   return (
     <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
