@@ -11,16 +11,7 @@ export const revalidate = 30;
 const getData = async () => {
   const user = "jmodell@busseinc.com";
 
-  // const url = new URL(`${getBaseUrl()}/api/files/list`);
-  // url.searchParams.append("prefix", encodeURI(user));
-
   return getKeysFromBucket({ prefix: user });
-
-  // const res = await fetch(`/api/files/list?prefix=${user}`, {
-  //   next: { tags: ["files"], revalidate: 60 },
-  // });
-
-  // return res.json() as Promise<T>;
 };
 
 export default async function FilesDashboard() {
