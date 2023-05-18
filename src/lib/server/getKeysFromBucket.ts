@@ -11,5 +11,10 @@ export async function getKeysFromBucket({ prefix }: { prefix: string }) {
 
   if (!Contents) return [];
 
-  return Contents.map((content) => content.Key as string);
+  return Contents.map((content) => {
+    return {
+      key: content.Key,
+      date: content.LastModified?.toISOString(),
+    };
+  });
 }

@@ -17,15 +17,30 @@ export default async function FilesDashboard() {
 
   if (!user) redirect("/api/auth/signin?callbackUrl=/files");
 
-  const filesArray = (await getData(user?.email)) as string[];
+  const filesArray = (await getData(user?.email)) as {
+    key: string;
+    date: string;
+  }[];
 
-  const fileList = filesArray.map((file) => {
-    return {
-      key: file,
-      url: `/api/files/download?key=${file}`,
-      filename: file.split("/").pop(),
-    };
-  });
+  const fileList = filesArray
+    .map(({ key, date }) => {
+      const _key = key;
+      const url = `/api/files/download?key=${_key}`;
+      const splitFile = _key.split("/");
+      const filename = splitFile.pop();
+      const id = splitFile.pop();
+
+      if (!filename) return;
+
+      return {
+        key,
+        url,
+        filename,
+        id,
+        date,
+      };
+    })
+    .filter((file) => file !== undefined);
 
   return (
     <div className="flex flex-col gap-y-2">

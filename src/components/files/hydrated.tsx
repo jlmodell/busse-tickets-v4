@@ -63,8 +63,22 @@ const ListOfFilesTableRenderer = ({ data }: { data: FileList[] }) => {
 
   const columns = [
     columnHelper.accessor("filename", {
-      cell: (info) => info.getValue(),
-      header: "Filename",
+      cell: (info) => <div>{info.getValue()}</div>,
+      header: "File Name",
+    }),
+
+    columnHelper.accessor("id", {
+      cell: (info) => (
+        <div className="text-xs text-gray-400/75">{info.getValue()}</div>
+      ),
+      header: "ID",
+    }),
+
+    columnHelper.accessor("date", {
+      cell: (info) => (
+        <div className="text-xs text-gray-400/75">{info.getValue()}</div>
+      ),
+      header: "File Date",
     }),
 
     columnHelper.accessor("url", {
