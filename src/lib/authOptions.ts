@@ -9,18 +9,14 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       server: {
         host: process.env.NODEMAILER_HOST,
-        port: process.env.NODEMAILER_PORT,
+        port: 587,
         secure: false,
-        tls: {
-          ciphers: "SSLv3",
-          rejectUnauthorized: false,
-        },
         auth: {
           user: process.env.NODEMAILER_USER,
           pass: process.env.NODEMAILER_PASSWORD,
         },
       },
-      from: process.env.NODEMAILER_USER,
+      from: '"noreply" <noreply@busseweb.com',
       maxAge: 24 * 60 * 60, // 24 hours
 
       // normalizeIdentifier(identifier: string): string {
