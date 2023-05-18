@@ -3,6 +3,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import Submit from "@/components/mainpage/submit";
+import { Input } from "@/components/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/select";
+import { Textarea } from "@/components/textarea";
 
 import {
   type S3File,
@@ -13,24 +22,7 @@ import {
 import { postTicket } from "@/lib/server/postTicket";
 import { getPresignedUrl } from "@/lib/server/getPresignedUrl";
 
-const departments = [
-  "general",
-  "packaging",
-  "manufacturing",
-  "accounting",
-  "order processing",
-  "purchasing",
-  "shipping",
-  "traffic",
-  "receiving",
-  "long island sterilization",
-  "label room",
-  "regulatory",
-  "document control",
-  "maintenance",
-  "materials",
-  "quality control",
-];
+import { DEPARTMENTS } from "@/lib/departments";
 
 const NewTicketForm = ({ user }: { user?: string }) => {
   const uploadS3Files = async (submittedBy: string, files: File[]) => {
@@ -65,13 +57,20 @@ const NewTicketForm = ({ user }: { user?: string }) => {
     }
     return s3Files;
   };
+
   const sendTicket = async (formData: FormData) => {
     "use server";
 
-    const files: S3File[] = await uploadS3Files(
-      formData.get("submittedBy") as string,
-      formData.getAll("files") as File[]
-    );
+    const _files = formData.getAll("files") as File[];
+
+    let files: S3File[] = [];
+
+    if (_files.length > 0 && _files[0].size > 0) {
+      files = await uploadS3Files(
+        formData.get("submittedBy") as string,
+        _files
+      );
+    }
 
     const ticket = {
       type: formData.get("type"),
@@ -94,6 +93,7 @@ const NewTicketForm = ({ user }: { user?: string }) => {
       redirect("/tickets/maintenance");
     }
   };
+
   return (
     <form
       action={sendTicket}
@@ -104,30 +104,31 @@ const NewTicketForm = ({ user }: { user?: string }) => {
       </h1>
 
       <label className="w-1/2 font-semibold text-left underline">Type</label>
-      <select
-        name="type"
-        className="w-full border border-gray-300 rounded-md pl-3 py-2"
-        required
-      >
-        <option value=""></option>
-        <option value="it">IT</option>
-        <option value="maintenance">MAINTENANCE</option>
-      </select>
+      <Select name="type" required>
+        <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
+          <SelectValue placeholder="Select a ticket type..." />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="it">IT</SelectItem>
+          <SelectItem value="maintenance">Maintenance</SelectItem>
+        </SelectContent>
+      </Select>
 
       <label className="w-1/2 font-semibold text-left underline">
         Department
       </label>
-      <select
-        name="department"
-        className="w-full border border-gray-300 rounded-md pl-3 py-2"
-        required
-      >
-        {departments.map((department, idx) => (
-          <option key={idx} value={department}>
-            {department.toLocaleUpperCase()}
-          </option>
-        ))}
-      </select>
+      <Select name="department" required>
+        <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2 capitalize">
+          <SelectValue placeholder="Select a department..." />
+        </SelectTrigger>
+        <SelectContent>
+          {DEPARTMENTS.map((department, idx) => (
+            <SelectItem key={idx} value={department} className="capitalize">
+              {department}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       <input
         hidden
@@ -149,7 +150,7 @@ const NewTicketForm = ({ user }: { user?: string }) => {
       <label className="w-1/2 font-semibold text-left underline">
         Description
       </label>
-      <textarea
+      <Textarea
         name="description"
         required
         className="w-full border border-gray-300 rounded-md pl-3 py-2 text-sm"
@@ -157,7 +158,7 @@ const NewTicketForm = ({ user }: { user?: string }) => {
       />
 
       <label className="w-1/2 font-semibold text-left underline">Files</label>
-      <input
+      <Input
         name="files"
         className="w-full border border-gray-300 rounded-md pl-3 py-2"
         type="file"

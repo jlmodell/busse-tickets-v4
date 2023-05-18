@@ -43,8 +43,18 @@ const fileSchema = z.object({
 
 export type S3File = z.infer<typeof fileSchema>;
 
+const responseSchema = z.object({
+  identifier: z.string(),
+  message: z.string(),
+  createdAt: z.date().transform((date) => date.toISOString()),
+});
+
+export type Response = z.infer<typeof responseSchema>;
+
 export const ticketSchema = z.object({
-  _id: z.union([z.string(), z.instanceof(ObjectId)]),
+  _id: z
+    .union([z.string(), z.instanceof(ObjectId)])
+    .transform((id) => id.toString()),
   type: typeEnum,
 
   department: z.union([departmentEnum, z.null()]).optional(),
@@ -64,6 +74,8 @@ export const ticketSchema = z.object({
   updatedAt: z.date().transform((date) => date.toLocaleDateString()),
 
   files: z.array(fileSchema).optional(),
+
+  responses: z.array(responseSchema).optional(),
 });
 
 export type Ticket = z.infer<typeof ticketSchema>;
@@ -80,14 +92,14 @@ const postTicketSchema = z.object({
 export type PostTicket = z.infer<typeof postTicketSchema>;
 
 const putTicketSchema = z.object({
-  _id: z.union([z.string(), z.instanceof(ObjectId)]),
   type: typeEnum,
   department: z.union([departmentEnum, z.null()]).optional(),
   submittedBy: z.string(),
   contactInfo: z.string(),
   description: z.string(),
-  files: z.array(fileSchema),
-  notes: z.string(),
+  files: z.array(fileSchema).optional(),
+  notes: z.string().optional(),
+  assignedTo: z.string().optional(),
   completed: z.boolean(),
   respondedTo: z.boolean(),
   followedUp: z.boolean(),

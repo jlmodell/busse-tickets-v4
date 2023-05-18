@@ -1,0 +1,18 @@
+export const DEPARTMENTS = [
+  "general",
+  "packaging",
+  "manufacturing",
+  "accounting",
+  "order processing",
+  "purchasing",
+  "shipping",
+  "traffic",
+  "receiving",
+  "long island sterilization",
+  "label room",
+  "regulatory",
+  "document control",
+  "maintenance",
+  "materials",
+  "quality control",
+];

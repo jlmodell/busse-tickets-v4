@@ -4,7 +4,6 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 
 import NavigationLinks from "@/components/mainpage/navigation";
-import SignInButton from "@/components/layout/signin";
 import Provider from "@/components/mainpage/sessionprovider";
 import LoginButtons from "@/components/layout/loginbuttons";
 
@@ -44,9 +43,12 @@ export default function RootLayout({
                   })}
                 </p>
               </div>
+              {/* @ts-expect-error Async Server Component */}
               <LoginButtons />
             </div>
-            {children}
+            <div className="w-full flex justify-center items-center mt-10 mb-32">
+              {children}
+            </div>
             <NavigationLinks />
           </main>
         </Provider>

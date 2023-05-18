@@ -7,7 +7,7 @@ const NavigationLinks = () => {
   const path = usePathname() as string;
 
   return (
-    <div className="mb-32 grid gap-x-1 text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
+    <div className="mb-10 grid gap-x-1 text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
       <Link
         href="/tickets/it"
         className={clsx(

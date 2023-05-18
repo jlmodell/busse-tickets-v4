@@ -30,10 +30,7 @@ export default async function FilesDashboard() {
   return (
     <div className="flex flex-col gap-y-2">
       <Suspense fallback={<div>Loading...</div>}>
-        <ListOfFiles
-          user={user?.email}
-          data={fileList as unknown as FileList[]}
-        />
+        <ListOfFiles data={fileList as unknown as FileList[]} />
       </Suspense>
     </div>
   );

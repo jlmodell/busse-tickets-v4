@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
-const Submit = () => {
+const Submit = ({ value }: { value?: string }) => {
   const { pending } = useFormStatus();
   return (
     <button
@@ -14,7 +14,7 @@ const Submit = () => {
       type="submit"
       disabled={pending}
     >
-      Send Ticket
+      {value ? value : "Submit Ticket"}
     </button>
   );
 };

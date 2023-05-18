@@ -17,13 +17,17 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
+import { usePathname } from "next/navigation";
 
 import { type Ticket } from "@/types/ticket.type";
+import { ExpandIcon } from "@/components/tickets/expandIcon";
+import Link from "next/link";
 
 const columnHelper = createColumnHelper<Ticket>();
 
 const TableRenderer = ({ data }: { data: Ticket[] }) => {
+  const pathname = usePathname();
   const initialState = {
     data: [...data],
     filter: "",
@@ -72,12 +76,9 @@ const TableRenderer = ({ data }: { data: Ticket[] }) => {
     }),
     columnHelper.accessor("_id", {
       cell: (info) => (
-        <button
-          className="cursor-pointer border rounded p-1 bg-gray-100 hover:bg-gray-200"
-          onClick={() => alert(info.getValue())}
-        >
-          ...{" "}
-        </button>
+        <Link className="" href={`${pathname}/${info.getValue()}`}>
+          <ExpandIcon />
+        </Link>
       ),
       header: "",
     }),
