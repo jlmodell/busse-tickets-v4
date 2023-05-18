@@ -27,7 +27,6 @@
     "dns": "^0.2.2",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
-    "fs": "0.0.1-security",
     "lucide-react": "^0.216.0",
     "mongodb": "^5.5.0",
     "nanoid": "^4.0.2",
