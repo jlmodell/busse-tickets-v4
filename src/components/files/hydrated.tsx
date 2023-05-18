@@ -23,7 +23,13 @@ import DownloadIcon from "./download";
 
 const columnHelper = createColumnHelper<FileList>();
 
-const ListOfFilesTableRenderer = ({ data }: { data: FileList[] }) => {
+const ListOfFilesTableRenderer = ({
+  user,
+  data,
+}: {
+  user?: string;
+  data: FileList[];
+}) => {
   const initialState = {
     data: [...data],
     filter: "",

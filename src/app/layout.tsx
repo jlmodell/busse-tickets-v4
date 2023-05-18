@@ -4,8 +4,9 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 
 import NavigationLinks from "@/components/mainpage/navigation";
-import SignInButton from "@/components/mainpage/signin";
+import SignInButton from "@/components/layout/signin";
 import Provider from "@/components/mainpage/sessionprovider";
+import LoginButtons from "@/components/layout/loginbuttons";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,7 +44,7 @@ export default function RootLayout({
                   })}
                 </p>
               </div>
-              <SignInButton />
+              <LoginButtons />
             </div>
             {children}
             <NavigationLinks />

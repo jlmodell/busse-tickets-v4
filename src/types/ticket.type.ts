@@ -1,7 +1,9 @@
+import { ObjectId } from "mongodb";
 import { z } from "zod";
 
 const typeEnum = z.enum(["it", "maintenance"]);
 const departmentEnum = z.enum([
+  "general",
   "packaging",
   "manufacturing",
   "accounting",
@@ -11,6 +13,13 @@ const departmentEnum = z.enum([
   "traffic",
   "receiving",
   "long island sterilization",
+  "label room",
+  "regulatory",
+  "document control",
+  "maintenance",
+  "materials",
+  "lis",
+  "quality control",
 ]);
 
 const s3FileFieldsSchema = z.object({
@@ -34,27 +43,27 @@ const fileSchema = z.object({
 
 export type S3File = z.infer<typeof fileSchema>;
 
-const ticketSchema = z.object({
-  _id: z.string(),
+export const ticketSchema = z.object({
+  _id: z.union([z.string(), z.instanceof(ObjectId)]),
   type: typeEnum,
 
-  department: departmentEnum,
+  department: z.union([departmentEnum, z.null()]).optional(),
   submittedBy: z.string(),
-  contactInfo: z.string(),
+  contactInfo: z.string().optional(),
 
   description: z.string(),
 
   assignedTo: z.string(),
   notes: z.string(),
 
-  completed: z.boolean(),
-  respondedTo: z.boolean(),
-  followedUp: z.boolean(),
+  completed: z.boolean().transform((completed) => completed.toString()),
+  respondedTo: z.boolean().transform((respondedTo) => respondedTo.toString()),
+  followedUp: z.boolean().transform((followedUp) => followedUp.toString()),
 
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.date().transform((date) => date.toLocaleDateString()),
+  updatedAt: z.date().transform((date) => date.toLocaleDateString()),
 
-  files: z.array(fileSchema),
+  files: z.array(fileSchema).optional(),
 });
 
 export type Ticket = z.infer<typeof ticketSchema>;
@@ -71,9 +80,9 @@ const postTicketSchema = z.object({
 export type PostTicket = z.infer<typeof postTicketSchema>;
 
 const putTicketSchema = z.object({
-  _id: z.string(),
+  _id: z.union([z.string(), z.instanceof(ObjectId)]),
   type: typeEnum,
-  department: departmentEnum,
+  department: z.union([departmentEnum, z.null()]).optional(),
   submittedBy: z.string(),
   contactInfo: z.string(),
   description: z.string(),

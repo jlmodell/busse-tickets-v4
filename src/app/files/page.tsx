@@ -8,10 +8,8 @@ import { getKeysFromBucket } from "@/lib/server/getKeysFromBucket";
 
 export const revalidate = 30;
 
-const getData = async () => {
-  const user = "jmodell@busseinc.com";
-
-  return getKeysFromBucket({ prefix: user });
+const getData = async (email: string) => {
+  return getKeysFromBucket({ prefix: email });
 };
 
 export default async function FilesDashboard() {
@@ -19,7 +17,7 @@ export default async function FilesDashboard() {
 
   if (!user) redirect("/api/auth/signin?callbackUrl=/files");
 
-  const filesArray = (await getData()) as string[];
+  const filesArray = (await getData(user?.email)) as string[];
 
   const fileList = filesArray.map((file) => {
     return {
@@ -32,7 +30,10 @@ export default async function FilesDashboard() {
   return (
     <div className="flex flex-col gap-y-2">
       <Suspense fallback={<div>Loading...</div>}>
-        <ListOfFiles data={fileList as unknown as FileList[]} />
+        <ListOfFiles
+          user={user?.email}
+          data={fileList as unknown as FileList[]}
+        />
       </Suspense>
     </div>
   );

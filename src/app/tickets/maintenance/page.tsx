@@ -1,24 +1,34 @@
-import { type Ticket } from "@/types/ticket.type";
+import { type Ticket, ticketSchema } from "@/types/ticket.type";
 import TableRenderer from "@/components/tickets/hydrated";
-// import getBaseUrl from "@/lib/baseURL";
 import { Suspense } from "react";
 import { getTickets } from "@/lib/server/getTickets";
+import { z } from "zod";
+import { getCurrentUser } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { User } from "@/types/user.type";
 
 export const revalidate = 30;
 
-const getData = async (type: "it" | "maintenance") => {
+const getData = async (user: User, type: "it" | "maintenance") => {
   return getTickets({
+    user: user?.email,
+    role: user?.role ?? "user",
     type,
   });
 };
 
 const TicketsMaintenanceDashboard = async () => {
-  const tickets = (await getData("maintenance")) as Ticket[];
+  const user = await getCurrentUser();
+
+  if (!user) redirect("/api/auth/signin?callbackUrl=/tickets/maintenance");
+
+  const data = (await getData(user, "maintenance")) as Ticket[];
+  const parsedData = z.array(ticketSchema).parse(data);
 
   return (
-    <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
+    <div className="flex place-items-center">
       <Suspense fallback={<div>Loading...</div>}>
-        <TableRenderer data={tickets} />
+        <TableRenderer data={parsedData} />
       </Suspense>
     </div>
   );
