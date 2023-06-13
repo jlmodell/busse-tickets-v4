@@ -10,7 +10,13 @@ const userSchema = z.object({
   name: z.string().optional(),
   email: z.string().email(),
   image: z.string().optional(),
-  role: z.union([z.literal("admin"), z.literal("user")]).optional(),
+  role: z
+    .union([
+      z.literal("admin"),
+      z.literal("user"),
+      z.literal("maintenance-admin"),
+    ])
+    .optional(),
 });
 
 export type User = z.infer<typeof userSchema>;

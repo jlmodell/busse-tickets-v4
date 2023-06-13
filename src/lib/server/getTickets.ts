@@ -7,7 +7,7 @@ export async function getTickets({
   type,
 }: {
   user: string;
-  role: "admin" | "user";
+  role: "admin" | "maintenance-admin" | "user";
   type: "it" | "maintenance";
 }) {
   const client = await clientPromise;
@@ -17,6 +17,15 @@ export async function getTickets({
     type: "it" | "maintenance";
     $or?: ({ submittedBy: string } | { contactInfo: string })[];
   } = { type };
+
+  if (role === "maintenance-admin") {
+    if (type === "it") {
+      filter = {
+        ...filter,
+        $or: [{ submittedBy: user }, { contactInfo: user }],
+      };
+    }
+  }
 
   if (role === "user") {
     filter = { ...filter, $or: [{ submittedBy: user }, { contactInfo: user }] };

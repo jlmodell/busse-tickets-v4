@@ -5,7 +5,7 @@ import { getTickets } from "@/lib/server/getTickets";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
-import { User } from "@/types/user.type";
+import { type User } from "@/types/user.type";
 
 export const revalidate = 30;
 

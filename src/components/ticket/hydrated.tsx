@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/select";
+import SwitchClient from "./switchComponents";
 import { Textarea } from "@/components/textarea";
 import { User } from "@/types/user.type";
 import Responses from "@/components/ticket/responses";
@@ -19,6 +20,7 @@ import { getPresignedUrl } from "@/lib/server/getPresignedUrl";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { putTicket } from "@/lib/server/putTicket";
+import { itAdmins, maintenanceAdmins } from "@/lib/constants/admins";
 
 export const TicketDetails = ({
   user,
@@ -27,9 +29,14 @@ export const TicketDetails = ({
   user: User;
   ticket: Ticket;
 }) => {
-  const isAdmin = user.role === "admin";
+  const isAdmin =
+    user.role === "admin"
+      ? true
+      : user.role === "maintenance-admin" && ticket.type === "maintenance"
+      ? true
+      : false;
 
-  const uploadS3Files = async (submittedBy: string, files: File[]) => {
+  async function uploadS3Files(submittedBy: string, files: File[]) {
     "use server";
 
     const s3Files: S3File[] = [];
@@ -60,9 +67,9 @@ export const TicketDetails = ({
       });
     }
     return s3Files;
-  };
+  }
 
-  const sendTicket = async (formData: FormData) => {
+  async function sendTicket(formData: FormData) {
     "use server";
 
     const type = formData.get("type") as string;
@@ -74,9 +81,9 @@ export const TicketDetails = ({
       submittedBy: formData.get("submittedBy") as string,
       contactInfo: formData.get("contactInfo") as string,
       description: formData.get("description") as string,
-      completed: formData.get("completed") === "true",
-      respondedTo: formData.get("respondedTo") === "true",
-      followedUp: formData.get("followedUp") === "true",
+      completed: formData.get("completed") === "on",
+      respondedTo: formData.get("respondedTo") === "on",
+      followedUp: formData.get("followedUp") === "on",
     } as PutTicket;
 
     const _files = formData.getAll("files") as File[];
@@ -91,7 +98,6 @@ export const TicketDetails = ({
     }
 
     if (isAdmin) {
-      console.log("isAdmin");
       ticket.notes = (formData.get("notes") as string) || "";
       ticket.assignedTo = (formData.get("assignedTo") as string) || "";
     }
@@ -105,7 +111,7 @@ export const TicketDetails = ({
       revalidatePath(`/tickets/maintenance/${_id}`);
       redirect(`/tickets/maintenance/${_id}`);
     }
-  };
+  }
 
   return (
     <div className="flex flex-col space-y-3">
@@ -130,9 +136,7 @@ export const TicketDetails = ({
         <h1 className="col-span-2 font-semibold tracking-tighter mb-5 text-3xl italic">
           {ticket._id}
         </h1>
-
         <input type="hidden" name="_id" value={ticket._id} />
-
         <label className="w-1/2 font-semibold text-left underline">Type</label>
         <Select name="type" required defaultValue={ticket.type}>
           <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
@@ -143,7 +147,6 @@ export const TicketDetails = ({
             <SelectItem value="maintenance">Maintenance</SelectItem>
           </SelectContent>
         </Select>
-
         <label className="w-1/2 font-semibold text-left underline">
           Department
         </label>
@@ -163,7 +166,6 @@ export const TicketDetails = ({
             ))}
           </SelectContent>
         </Select>
-
         <label className="w-1/2 font-semibold text-left underline">
           Submitted By
         </label>
@@ -184,7 +186,6 @@ export const TicketDetails = ({
           className="w-full border border-gray-300 rounded-md pl-3 py-2"
           type="text"
         />
-
         <label className="w-1/2 font-semibold text-left underline">
           Description
         </label>
@@ -195,7 +196,6 @@ export const TicketDetails = ({
           className="w-full border border-gray-300 rounded-md pl-3 py-2 text-sm"
           rows={10}
         />
-
         <label className="w-1/2 font-semibold text-left underline">Files</label>
         <div className="flex flex-col space-x-3 w-full">
           <Input
@@ -217,82 +217,58 @@ export const TicketDetails = ({
               : "No files attached"}
           </ul>
         </div>
-
         {isAdmin && (
           <>
             <label className="w-1/2 font-semibold text-left underline">
               Notes
             </label>
             <Textarea
-              name="description"
+              name="notes"
               defaultValue={ticket.notes}
               className="w-full border border-gray-300 rounded-md pl-3 py-2 text-sm"
               rows={5}
             />
-
             <label className="w-1/2 font-semibold text-left underline">
               Assignment
             </label>
             <Select name="assignedTo" defaultValue={ticket.assignedTo || ""}>
               <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
-                <SelectValue placeholder="Choose a tech..." />
+                <SelectValue placeholder="Choose a person to assign the ticket to..." />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value=""> </SelectItem>
-                <SelectItem value="jmodell@busseinc.com">
-                  Jeff Modell
-                </SelectItem>
-                <SelectItem value="jflores@busseinc.com">
-                  Juan Flores
-                </SelectItem>
+                {ticket.type === "it" &&
+                  itAdmins.map((admin, idx) => (
+                    <SelectItem key={`it-${idx}`} value={admin.email}>
+                      {admin.name}
+                    </SelectItem>
+                  ))}
+                {ticket.type === "maintenance" &&
+                  maintenanceAdmins.map((admin, idx) => (
+                    <SelectItem key={`maintenance-${idx}`} value={admin.email}>
+                      {admin.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
 
-            <label className="w-1/2 font-semibold text-left underline">
-              Responded To
-            </label>
-            <Select name="respondedTo" defaultValue={ticket.respondedTo}>
-              <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
-                <SelectValue placeholder="Choose..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Yes</SelectItem>
-                <SelectItem value="false">No</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <label className="w-1/2 font-semibold text-left underline">
-              Followed Up
-            </label>
-            <Select name="followedUp" required defaultValue={ticket.followedUp}>
-              <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
-                <SelectValue placeholder="Choose..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectContent>
-                  <SelectItem value="true">Yes</SelectItem>
-                  <SelectItem value="false">No</SelectItem>
-                </SelectContent>
-              </SelectContent>
-            </Select>
-
-            <label className="w-1/2 font-semibold text-left underline">
-              Completed
-            </label>
-            <Select name="completed" required defaultValue={ticket.completed}>
-              <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
-                <SelectValue placeholder="Choose..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectContent>
-                  <SelectItem value="true">Yes</SelectItem>
-                  <SelectItem value="false">No</SelectItem>
-                </SelectContent>
-              </SelectContent>
-            </Select>
+            <SwitchClient
+              name="respondedTo"
+              ticket={ticket}
+              label={"Responded To"}
+            />
+            <SwitchClient
+              name="followedUp"
+              ticket={ticket}
+              label={"Followed Up"}
+            />
+            <SwitchClient
+              name="completed"
+              ticket={ticket}
+              label={"Completed"}
+            />
           </>
         )}
-
         <Submit value="Update Ticket" />
       </form>
     </div>

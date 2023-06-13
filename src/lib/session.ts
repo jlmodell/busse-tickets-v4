@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "@/lib/authOptions";
-import { Session, User } from "@/types/user.type";
+import { type Session, type User } from "@/types/user.type";
 
-const adminEmails = ["jmodell@busseinc.com", "jflores@busseinc.com"];
+import { adminEmails, maintenanceAdminEmails } from "@/lib/constants/admins";
 
 export async function getCurrentUser() {
   const session = (await getServerSession(authOptions)) as Session;
@@ -12,6 +12,9 @@ export async function getCurrentUser() {
     const user: User = session.user;
     if (adminEmails.includes(user.email)) {
       user.role = "admin";
+    }
+    if (maintenanceAdminEmails.includes(user.email)) {
+      user.role = "maintenance-admin";
     }
     if (user.role === undefined) {
       user.role = "user";
