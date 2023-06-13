@@ -5,17 +5,20 @@ import { addResponseToTicket } from "@/lib/server/addResponseToTicket";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import MailIcon from "@/components/ticket/mailIcon";
+import axios from "axios";
 
 export default async function Responses({
   _id,
   identifier,
   submittedBy,
   responses,
+  ticketType,
 }: {
   _id: string;
   identifier: string;
   submittedBy: string;
   responses: Response[];
+  ticketType: "it" | "maintenance";
 }) {
   const sendResponse = async (formData: FormData) => {
     "use server";
@@ -34,8 +37,22 @@ export default async function Responses({
       },
     });
 
-    revalidatePath(`/tickets/it/${_id}`);
-    redirect(`/tickets/it/${_id}`);
+    await axios.post("https://api.emailjs.com/api/v1.0/email/send", {
+      service_id: "smtp_server",
+      template_id: "template_maq30zy",
+      user_id: "user_Jz3dLrqEkcq2B1IPSLb5k",
+      template_params: {
+        message,
+        to_email: submittedBy,
+        from_name: identifier,
+        from_email: identifier,
+        link: `https://busse-tickets-v4-4dxf3mb0q-busse.vercel.app/tickets/${ticketType}/${_id}}`,
+        _id,
+      },
+    });
+
+    revalidatePath(`/tickets/${ticketType}/${_id}`);
+    redirect(`/tickets/${ticketType}/${_id}`);
   };
 
   return (

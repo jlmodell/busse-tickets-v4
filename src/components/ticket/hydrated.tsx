@@ -121,6 +121,7 @@ export const TicketDetails = ({
         identifier={user.email}
         submittedBy={ticket.submittedBy}
         responses={ticket.responses || []}
+        ticketType={ticket.type}
       />
 
       <div className="flex justify-around items-center">
