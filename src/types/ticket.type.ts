@@ -46,7 +46,11 @@ export type S3File = z.infer<typeof fileSchema>;
 const responseSchema = z.object({
   identifier: z.string(),
   message: z.string(),
-  createdAt: z.date().transform((date) => date.toISOString()),
+  createdAt: z
+    .union([z.date(), z.string()])
+    .transform((date) =>
+      typeof date === "string" ? date : date.toLocaleDateString()
+    ),
 });
 
 export type Response = z.infer<typeof responseSchema>;
@@ -70,8 +74,18 @@ export const ticketSchema = z.object({
   respondedTo: z.boolean().transform((respondedTo) => respondedTo.toString()),
   followedUp: z.boolean().transform((followedUp) => followedUp.toString()),
 
-  createdAt: z.date().transform((date) => date.toLocaleDateString()),
-  updatedAt: z.date().transform((date) => date.toLocaleDateString()),
+  // createdAt: z.date().transform((date) => date.toLocaleDateString()),
+  // updatedAt: z.date().transform((date) => date.toLocaleDateString()),
+  createdAt: z
+    .union([z.date(), z.string()])
+    .transform((date) =>
+      typeof date === "string" ? date : date.toLocaleDateString()
+    ),
+  updatedAt: z
+    .union([z.date(), z.string()])
+    .transform((date) =>
+      typeof date === "string" ? date : date.toLocaleDateString()
+    ),
 
   files: z.array(fileSchema).optional(),
 
