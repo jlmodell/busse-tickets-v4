@@ -19,6 +19,7 @@ export default async function ITTicketDetailsPage({
 
   const data = await getData(params.id);
   const parsedData = ticketSchema.parse(data);
+  const type = "it";
 
-  return <TicketDetails user={user} ticket={parsedData} />;
+  return <TicketDetails user={user} ticket={parsedData} type={type} />;
 }
