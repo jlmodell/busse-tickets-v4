@@ -116,8 +116,8 @@ const TableRenderer = ({ data }: { data: Ticket[] }) => {
   });
 
   return (
-    <div className="w-full min-w-full flex flex-col justify-around items-center">
-      <div className="flex space-x-2">
+    <div className="w-full flex flex-col justify-around items-center">
+      <div className="flex space-x-2 my-10">
         <input
           type="text"
           value={state.filter}
@@ -134,7 +134,7 @@ const TableRenderer = ({ data }: { data: Ticket[] }) => {
           Reset
         </button>
       </div>
-      <Table className="">
+      <Table className="overflow-x-scroll">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup, idx) => (
             <TableRow key={idx}>
@@ -151,7 +151,7 @@ const TableRenderer = ({ data }: { data: Ticket[] }) => {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="overflow-x-scroll">
           {table.getRowModel().rows.map((row, idx) => (
             <TableRow key={idx}>
               {row.getVisibleCells().map((cell, idx) => (

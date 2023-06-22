@@ -49,7 +49,7 @@ const responseSchema = z.object({
   createdAt: z
     .union([z.date(), z.string()])
     .transform((date) =>
-      typeof date === "string" ? date : date.toLocaleDateString()
+      typeof date === "string" ? date : date.toLocaleString()
     ),
 });
 

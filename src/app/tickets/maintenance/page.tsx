@@ -26,7 +26,7 @@ const TicketsMaintenanceDashboard = async () => {
   const parsedData = z.array(ticketSchema).parse(data);
 
   return (
-    <div className="flex place-items-center">
+    <div className="flex place-items-center max-w-100vw overflow-x-scroll">
       <Suspense fallback={<div>Loading...</div>}>
         <TableRenderer data={parsedData} />
       </Suspense>

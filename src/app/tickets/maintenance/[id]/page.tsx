@@ -19,6 +19,7 @@ export default async function MaintenanceTicketDetailsPage({
 
   const data = await getData(params.id);
   const parsedData = ticketSchema.parse(data);
+  const type = "maintenance";
 
-  return <TicketDetails user={user} ticket={parsedData} />;
+  return <TicketDetails user={user} ticket={parsedData} type={type} />;
 }

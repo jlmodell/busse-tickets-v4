@@ -7,6 +7,8 @@ import { redirect } from "next/navigation";
 import MailIcon from "@/components/ticket/mailIcon";
 import axios from "axios";
 
+import { type EmailParams, sendEmail } from "@/lib/emailjs/send_email";
+
 export default async function Responses({
   _id,
   identifier,
@@ -37,11 +39,9 @@ export default async function Responses({
       },
     });
 
-    await axios.post("https://api.emailjs.com/api/v1.0/email/send", {
-      service_id: "smtp_server",
-      template_id: "template_maq30zy",
-      user_id: "user_Jz3dLrqEkcq2B1IPSLb5k",
-      template_params: {
+    await sendEmail({
+      template: "template_maq30zy",
+      params: {
         message,
         to_email: submittedBy,
         from_name: identifier,
@@ -56,7 +56,11 @@ export default async function Responses({
   };
 
   return (
-    <form id="response-div" action={sendResponse}>
+    <form
+      id="response-div"
+      action={sendResponse}
+      className="text-sm md:text-lg"
+    >
       <input type="hidden" name="identifier" value={identifier} />
       <input type="hidden" name="_id" value={_id} />
       <div className="w-full flex flex-col space-y-2 divide-y-2 py-4 px-1">
@@ -70,7 +74,10 @@ export default async function Responses({
               )}
             >
               <label className="font-semibold mt-2">
-                {response.identifier}
+                {response.identifier}{" "}
+                <span className="text-xs italic text-gray-500">
+                  {response.createdAt}
+                </span>
               </label>
               <p className="">{response.message}</p>
             </div>

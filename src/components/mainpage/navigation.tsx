@@ -7,7 +7,7 @@ const NavigationLinks = () => {
   const path = usePathname() as string;
 
   return (
-    <div className="mb-10 grid gap-x-1 text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
+    <div className="md:mb-10 grid gap-y-1 lg:gap-x-1 lg:gap-y-0 text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
       <Link
         href="/tickets/it"
         className={clsx(
@@ -65,7 +65,7 @@ const NavigationLinks = () => {
 
       <Link
         href="https://busseforce.com/"
-        className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 bg-blue-400 text-white hover:text-black"
+        className="mb-[20vh] md:mb-0 group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 bg-blue-400 text-white hover:text-black"
         target="_blank"
       >
         <h2 className={`mb-3 text-2xl font-semibold`}>

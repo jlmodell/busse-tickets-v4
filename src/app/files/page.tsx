@@ -43,7 +43,7 @@ export default async function FilesDashboard() {
     .filter((file) => file !== undefined);
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex place-items-center max-w-100vw overflow-x-scroll">
       <Suspense fallback={<div>Loading...</div>}>
         <ListOfFiles data={fileList as unknown as FileList[]} />
       </Suspense>

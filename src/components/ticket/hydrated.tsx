@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/select";
 import SwitchClient from "./switchComponents";
+import SendEmailSwitchClient from "./sendEmailSwitchComponent";
 import { Textarea } from "@/components/textarea";
 import { User } from "@/types/user.type";
 import Responses from "@/components/ticket/responses";
@@ -21,13 +22,16 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { putTicket } from "@/lib/server/putTicket";
 import { itAdmins, maintenanceAdmins } from "@/lib/constants/admins";
+import { sendEmail } from "@/lib/emailjs/send_email";
 
 export const TicketDetails = ({
   user,
   ticket,
+  type,
 }: {
   user: User;
   ticket: Ticket;
+  type: "it" | "maintenance";
 }) => {
   const isAdmin =
     user.role === "admin"
@@ -75,6 +79,8 @@ export const TicketDetails = ({
     const type = formData.get("type") as string;
     const _id = formData.get("_id") as string;
 
+    const sendEmailToggled = formData.get("sendEmail") === "on";
+
     const ticket = {
       type,
       department: formData.get("department") as string,
@@ -104,6 +110,20 @@ export const TicketDetails = ({
 
     await putTicket(_id, ticket, files);
 
+    if (sendEmailToggled || !isAdmin) {
+      await sendEmail({
+        template: "template_hi6wjnl",
+        params: {
+          description: ticket.description,
+          ticketType: ticket.type,
+          to_email: ticket.submittedBy,
+          link: `https://busse-tickets-v4-4dxf3mb0q-busse.vercel.app/tickets/${ticket.type}/${_id}}`,
+          _id,
+          datetime: new Date().toLocaleString(),
+        },
+      });
+    }
+
     if (type === "it") {
       revalidatePath(`/tickets/it/${_id}`);
       redirect(`/tickets/it/${_id}`);
@@ -125,22 +145,29 @@ export const TicketDetails = ({
       />
 
       <div className="flex justify-around items-center">
-        <Link href="/tickets/it" className="text-blue-500 hover:underline">
-          Back to Tickets
+        <Link
+          href={type === "it" ? "/tickets/it" : "/tickets/maintenance"}
+          className="text-blue-500 hover:underline"
+        >
+          Back to {type === "it" ? "IT" : "Maintenance"} Tickets
         </Link>
       </div>
 
       <form
         action={sendTicket}
-        className="relative gap-y-2 grid grid-cols-2 place-items-center min-w-3/4 p-5 border border-gray-300 bg-slate-50 rounded-md overflow-auto"
+        className="relative gap-y-3 grid grid-cols-5 place-items-center min-w-3/4 p-1 md:p-5 border border-gray-300 bg-slate-50 rounded-md overflow-auto"
       >
-        <h1 className="col-span-2 font-semibold tracking-tighter mb-5 text-3xl italic">
+        <h1 className="col-span-5 font-semibold tracking-tighter mb-5 text-xl md:text-3xl italic">
           {ticket._id}
         </h1>
+
         <input type="hidden" name="_id" value={ticket._id} />
-        <label className="w-1/2 font-semibold text-left underline">Type</label>
+
+        <label className="col-span-2 w-full pl-1 font-semibold text-left underline">
+          Type
+        </label>
         <Select name="type" required defaultValue={ticket.type}>
-          <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
+          <SelectTrigger className="col-span-3 w-full border border-gray-300 rounded-md pl-3 py-2">
             <SelectValue placeholder="Select a ticket type..." />
           </SelectTrigger>
           <SelectContent>
@@ -148,7 +175,8 @@ export const TicketDetails = ({
             <SelectItem value="maintenance">Maintenance</SelectItem>
           </SelectContent>
         </Select>
-        <label className="w-1/2 font-semibold text-left underline">
+
+        <label className="col-span-2 w-full pl-1  font-semibold text-left underline">
           Department
         </label>
         <Select
@@ -156,7 +184,7 @@ export const TicketDetails = ({
           required
           defaultValue={ticket?.department || "general"}
         >
-          <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2 capitalize">
+          <SelectTrigger className="col-span-3 w-full border border-gray-300 rounded-md pl-3 py-2 capitalize">
             <SelectValue placeholder="Select a department..." />
           </SelectTrigger>
           <SelectContent>
@@ -167,38 +195,48 @@ export const TicketDetails = ({
             ))}
           </SelectContent>
         </Select>
-        <label className="w-1/2 font-semibold text-left underline">
+
+        <label className="col-span-2 w-full pl-1  font-semibold text-left underline">
           Submitted By
         </label>
         <Input
           defaultValue={ticket.submittedBy}
           name="submittedBy"
           required
-          className="w-full border border-gray-300 rounded-md pl-3 py-2"
+          className="col-span-3 w-full border border-gray-300 rounded-md pl-3 py-2"
           type="text"
         />
-        <label className="w-1/2 font-semibold text-left underline">
+
+        <label className="col-span-2 w-full pl-1  font-semibold text-left underline">
           Contact Info
         </label>
         <Input
           name="contactInfo"
-          defaultValue={ticket.contactInfo}
+          defaultValue={
+            ticket.contactInfo === "" || ticket.contactInfo === undefined
+              ? ticket.submittedBy
+              : ticket.contactInfo
+          }
           required
-          className="w-full border border-gray-300 rounded-md pl-3 py-2"
+          className="col-span-3 w-full border border-gray-300 rounded-md pl-3 py-2"
           type="text"
         />
-        <label className="w-1/2 font-semibold text-left underline">
+
+        <label className="col-span-2 w-full pl-1  font-semibold text-left underline">
           Description
         </label>
         <Textarea
           name="description"
           defaultValue={ticket.description}
           required
-          className="w-full border border-gray-300 rounded-md pl-3 py-2 text-sm"
+          className="col-span-3 w-full border border-gray-300 rounded-md pl-3 py-2 text-sm"
           rows={10}
         />
-        <label className="w-1/2 font-semibold text-left underline">Files</label>
-        <div className="flex flex-col space-x-3 w-full">
+
+        <label className="col-span-2 w-full pl-1  font-semibold text-left underline">
+          Files
+        </label>
+        <div className="col-span-5 flex flex-col space-x-3 w-full my-5">
           <Input
             name="files"
             className="w-full border border-gray-300 rounded-md pl-3 py-2"
@@ -218,22 +256,23 @@ export const TicketDetails = ({
               : "No files attached"}
           </ul>
         </div>
+
         {isAdmin && (
           <>
-            <label className="w-1/2 font-semibold text-left underline">
+            <label className="col-span-2 w-full pl-1  font-semibold text-left underline">
               Notes
             </label>
             <Textarea
               name="notes"
               defaultValue={ticket.notes}
-              className="w-full border border-gray-300 rounded-md pl-3 py-2 text-sm"
+              className="col-span-3 w-full border border-gray-300 rounded-md pl-3 py-2 text-sm"
               rows={5}
             />
-            <label className="w-1/2 font-semibold text-left underline">
+            <label className="col-span-2 w-full pl-1  font-semibold text-left underline">
               Assignment
             </label>
             <Select name="assignedTo" defaultValue={ticket.assignedTo || ""}>
-              <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
+              <SelectTrigger className="col-span-3 w-full border border-gray-300 rounded-md pl-3 py-2">
                 <SelectValue placeholder="Choose a person to assign the ticket to..." />
               </SelectTrigger>
               <SelectContent>
@@ -267,6 +306,10 @@ export const TicketDetails = ({
               name="completed"
               ticket={ticket}
               label={"Completed"}
+            />
+            <SendEmailSwitchClient
+              name="sendEmail"
+              label={"Send Email with Update?"}
             />
           </>
         )}

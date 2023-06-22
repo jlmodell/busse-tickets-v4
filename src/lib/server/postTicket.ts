@@ -16,11 +16,7 @@ export async function postTicket(ticket: PostTicket) {
     assignedTo: "",
   };
 
-  try {
-    await db.collection("tickets").insertOne(_ticket);
-  } catch (err) {
-    throw err;
-  }
+  const result = await db.collection("tickets").insertOne(_ticket);
 
-  return _ticket;
+  return result.insertedId.toString();
 }

@@ -23,6 +23,7 @@ import { postTicket } from "@/lib/server/postTicket";
 import { getPresignedUrl } from "@/lib/server/getPresignedUrl";
 
 import { DEPARTMENTS } from "@/lib/departments";
+import { sendEmail } from "@/lib/emailjs/send_email";
 
 const NewTicketForm = ({ user }: { user?: string }) => {
   const uploadS3Files = async (submittedBy: string, files: File[]) => {
@@ -81,7 +82,19 @@ const NewTicketForm = ({ user }: { user?: string }) => {
       files,
     } as PostTicket;
 
-    await postTicket(ticket);
+    const _id = await postTicket(ticket);
+
+    await sendEmail({
+      template: "template_hi6wjnl",
+      params: {
+        _id,
+        description: ticket.description,
+        ticketType: ticket.type,
+        to_email: ticket.submittedBy,
+        link: `https://busse-tickets-v4-4dxf3mb0q-busse.vercel.app/tickets/${ticket.type}/${_id}}`,
+        datetime: new Date().toLocaleString(),
+      },
+    });
 
     const type = formData.get("type") as string;
 
@@ -97,15 +110,17 @@ const NewTicketForm = ({ user }: { user?: string }) => {
   return (
     <form
       action={sendTicket}
-      className="relative gap-y-2 grid grid-cols-2 place-items-center w-3/4 p-5 border border-gray-300 bg-slate-50 rounded-md"
+      className="relative gap-y-2 grid grid-cols-5 place-items-center w-full md:w-3/4 p-1 md:p-5 border border-gray-300 bg-slate-50 rounded-md mt-10"
     >
-      <h1 className="col-span-2 font-semibold tracking-tighter mb-5 text-3xl italic">
+      <h1 className="col-span-5 font-semibold tracking-tighter mb-5 text-3xl italic">
         New Ticket...
       </h1>
 
-      <label className="w-1/2 font-semibold text-left underline">Type</label>
+      <label className="w-full col-span-2 font-semibold text-left underline">
+        Type
+      </label>
       <Select name="type" required>
-        <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2">
+        <SelectTrigger className="w-full col-span-3 border border-gray-300 rounded-md pl-3 py-2">
           <SelectValue placeholder="Select a ticket type..." />
         </SelectTrigger>
         <SelectContent>
@@ -114,11 +129,11 @@ const NewTicketForm = ({ user }: { user?: string }) => {
         </SelectContent>
       </Select>
 
-      <label className="w-1/2 font-semibold text-left underline">
+      <label className="w-full col-span-2 font-semibold text-left underline">
         Department
       </label>
       <Select name="department" required>
-        <SelectTrigger className="w-full border border-gray-300 rounded-md pl-3 py-2 capitalize">
+        <SelectTrigger className="w-full col-span-3 border border-gray-300 rounded-md pl-3 py-2 capitalize">
           <SelectValue placeholder="Select a department..." />
         </SelectTrigger>
         <SelectContent>
@@ -135,7 +150,6 @@ const NewTicketForm = ({ user }: { user?: string }) => {
         defaultValue={user}
         name="submittedBy"
         required
-        className="w-full border border-gray-300 rounded-md pl-3 py-2"
         type="text"
       />
       <input
@@ -143,24 +157,25 @@ const NewTicketForm = ({ user }: { user?: string }) => {
         name="contactInfo"
         defaultValue={user}
         required
-        className="w-full border border-gray-300 rounded-md pl-3 py-2"
         type="text"
       />
 
-      <label className="w-1/2 font-semibold text-left underline">
+      <label className="w-full col-span-2 font-semibold text-left underline">
         Description
       </label>
       <Textarea
         name="description"
         required
-        className="w-full border border-gray-300 rounded-md pl-3 py-2 text-sm"
+        className="w-full col-span-3 border border-gray-300 rounded-md pl-3 py-2 text-sm"
         rows={10}
       />
 
-      <label className="w-1/2 font-semibold text-left underline">Files</label>
+      <label className="w-full col-span-2 font-semibold text-left underline">
+        Files
+      </label>
       <Input
         name="files"
-        className="w-full border border-gray-300 rounded-md pl-3 py-2"
+        className="w-full col-span-3 border border-gray-300 rounded-md pl-3 py-2"
         type="file"
         multiple
       />
