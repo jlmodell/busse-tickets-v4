@@ -5,9 +5,8 @@ import { addResponseToTicket } from "@/lib/server/addResponseToTicket";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import MailIcon from "@/components/ticket/mailIcon";
-import axios from "axios";
-
-import { type EmailParams, sendEmail } from "@/lib/emailjs/send_email";
+import { baseURL } from "@/lib/constants/baseURL";
+import { sendEmail } from "@/lib/emailjs/send_email";
 
 export default async function Responses({
   _id,
@@ -46,7 +45,7 @@ export default async function Responses({
         to_email: submittedBy,
         from_name: identifier,
         from_email: identifier,
-        link: `https://busse-tickets-v4-4dxf3mb0q-busse.vercel.app/tickets/${ticketType}/${_id}}`,
+        link: `${baseURL}/tickets/${ticketType}/${_id}}`,
         _id,
       },
     });

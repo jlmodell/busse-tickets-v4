@@ -24,6 +24,7 @@ import { getPresignedUrl } from "@/lib/server/getPresignedUrl";
 
 import { DEPARTMENTS } from "@/lib/departments";
 import { sendEmail } from "@/lib/emailjs/send_email";
+import { baseURL } from "@/lib/constants/baseURL";
 
 const NewTicketForm = ({ user }: { user?: string }) => {
   const uploadS3Files = async (submittedBy: string, files: File[]) => {
@@ -91,7 +92,7 @@ const NewTicketForm = ({ user }: { user?: string }) => {
         description: ticket.description,
         ticketType: ticket.type,
         to_email: ticket.submittedBy,
-        link: `https://busse-tickets-v4-4dxf3mb0q-busse.vercel.app/tickets/${ticket.type}/${_id}}`,
+        link: `${baseURL}/tickets/${ticket.type}/${_id}}`,
         datetime: new Date().toLocaleString(),
       },
     });

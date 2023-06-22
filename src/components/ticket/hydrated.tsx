@@ -23,6 +23,7 @@ import { redirect } from "next/navigation";
 import { putTicket } from "@/lib/server/putTicket";
 import { itAdmins, maintenanceAdmins } from "@/lib/constants/admins";
 import { sendEmail } from "@/lib/emailjs/send_email";
+import { baseURL } from "@/lib/constants/baseURL";
 
 export const TicketDetails = ({
   user,
@@ -117,7 +118,7 @@ export const TicketDetails = ({
           description: ticket.description,
           ticketType: ticket.type,
           to_email: ticket.submittedBy,
-          link: `https://busse-tickets-v4-4dxf3mb0q-busse.vercel.app/tickets/${ticket.type}/${_id}}`,
+          link: `${baseURL}/tickets/${ticket.type}/${_id}}`,
           _id,
           datetime: new Date().toLocaleString(),
         },
