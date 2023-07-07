@@ -18,6 +18,10 @@ export const itAdmins = [
     email: "jflores@busseinc.com",
     name: "Juan Flores",
   },
+  // {
+  //   email: "mansari@busseinc.com",
+  //   name: "Muhamad Ansari",
+  // },
 ];
 
 export const maintenanceAdmins = [
@@ -29,4 +33,8 @@ export const maintenanceAdmins = [
     email: "ccollazos@busseinc.com",
     name: "Carlos Collazos",
   },
+  // {
+  //   email: "rohara@busseinc.com",
+  //   name: "Ray Ohara",
+  // },
 ];

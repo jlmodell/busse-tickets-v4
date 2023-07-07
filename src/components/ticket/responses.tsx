@@ -45,7 +45,7 @@ export default async function Responses({
         to_email: submittedBy,
         from_name: identifier,
         from_email: identifier,
-        link: `${baseURL}/tickets/${ticketType}/${_id}}`,
+        link: `${baseURL}/tickets/${ticketType}/${_id}`,
         _id,
       },
     });

@@ -118,7 +118,7 @@ export const TicketDetails = ({
           description: ticket.description,
           ticketType: ticket.type,
           to_email: ticket.submittedBy,
-          link: `${baseURL}/tickets/${ticket.type}/${_id}}`,
+          link: `${baseURL}/tickets/${ticket.type}/${_id}`,
           _id,
           datetime: new Date().toLocaleString(),
         },
