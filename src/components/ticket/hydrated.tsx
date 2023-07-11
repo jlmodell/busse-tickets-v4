@@ -41,41 +41,41 @@ export const TicketDetails = ({
       ? true
       : false;
 
-  async function uploadS3Files(submittedBy: string, files: File[]) {
-    "use server";
-
-    const s3Files: S3File[] = [];
-
-    for (const file of files) {
-      const key = `${submittedBy}/${nanoid()}/${file.name}`;
-
-      const { url, fields } = (await getPresignedUrl({
-        key,
-      })) as { url: string; fields: S3FileFields };
-
-      const uploadFormData = new FormData();
-
-      Object.entries({ ...fields, file }).forEach(([key, value]) => {
-        uploadFormData.append(key, value as string | Blob);
-      });
-
-      await fetch(url, {
-        method: "POST",
-        body: uploadFormData,
-      });
-
-      s3Files.push({
-        url,
-        fields,
-        filename: file.name,
-        filetype: file.type,
-      });
-    }
-    return s3Files;
-  }
-
   async function sendTicket(formData: FormData) {
     "use server";
+
+    async function uploadS3Files(submittedBy: string, files: File[]) {
+      "use server";
+
+      const s3Files: S3File[] = [];
+
+      for (const file of files) {
+        const key = `${submittedBy}/${nanoid()}/${file.name}`;
+
+        const { url, fields } = (await getPresignedUrl({
+          key,
+        })) as { url: string; fields: S3FileFields };
+
+        const uploadFormData = new FormData();
+
+        Object.entries({ ...fields, file }).forEach(([key, value]) => {
+          uploadFormData.append(key, value as string | Blob);
+        });
+
+        await fetch(url, {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        s3Files.push({
+          url,
+          fields,
+          filename: file.name,
+          filetype: file.type,
+        });
+      }
+      return s3Files;
+    }
 
     const type = formData.get("type") as string;
     const _id = formData.get("_id") as string;
