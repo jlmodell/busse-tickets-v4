@@ -52,7 +52,7 @@ export default async function Responses({
     });
 
     await sendDiscordNotification(
-      `New response to ${ticketType} ticket @ ${baseURL}/tickets/${ticketType}/${_id} !`
+      `New response to ${ticketType} ticket @ ${baseURL}/tickets/${ticketType}/${_id} by ${identifier} with message: ${message}`
     );
 
     revalidatePath(`/tickets/${ticketType}/${_id}`);

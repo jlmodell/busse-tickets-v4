@@ -99,7 +99,7 @@ const NewTicketForm = ({ user }: { user?: string }) => {
     });
 
     await sendDiscordNotification(
-      `New ${ticket.type} ticket created @ ${baseURL}/tickets/${ticket.type}/${_id} !`
+      `New ${ticket.type} ticket created @ ${baseURL}/tickets/${ticket.type}/${_id} by ${ticket.submittedBy} with description: ${ticket.description}`
     );
 
     const type = formData.get("type") as string;
