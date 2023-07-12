@@ -25,6 +25,7 @@ import { getPresignedUrl } from "@/lib/server/getPresignedUrl";
 import { DEPARTMENTS } from "@/lib/departments";
 import { sendEmail } from "@/lib/emailjs/send_email";
 import { baseURL } from "@/lib/constants/baseURL";
+import { sendDiscordNotification } from "@/lib/discordNotifications";
 
 const NewTicketForm = ({ user }: { user?: string }) => {
   const uploadS3Files = async (submittedBy: string, files: File[]) => {
@@ -96,6 +97,10 @@ const NewTicketForm = ({ user }: { user?: string }) => {
         datetime: new Date().toLocaleString(),
       },
     });
+
+    await sendDiscordNotification(
+      `New ${ticket.type} ticket created @ ${baseURL}/tickets/${ticket.type}/${_id}} !`
+    );
 
     const type = formData.get("type") as string;
 

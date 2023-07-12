@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import MailIcon from "@/components/ticket/mailIcon";
 import { baseURL } from "@/lib/constants/baseURL";
 import { sendEmail } from "@/lib/emailjs/send_email";
+import { sendDiscordNotification } from "@/lib/discordNotifications";
 
 export default async function Responses({
   _id,
@@ -50,6 +51,10 @@ export default async function Responses({
       },
     });
 
+    await sendDiscordNotification(
+      `New response to ${ticketType} ticket @ ${baseURL}/tickets/${ticketType}/${_id}} !`
+    );
+
     revalidatePath(`/tickets/${ticketType}/${_id}`);
     redirect(`/tickets/${ticketType}/${_id}`);
   };
@@ -62,7 +67,7 @@ export default async function Responses({
     >
       <input type="hidden" name="identifier" value={identifier} />
       <input type="hidden" name="_id" value={_id} />
-      <div className="w-full flex flex-col space-y-2 divide-y-2 py-4 px-1">
+      <div className="w-full flex flex-col space-y-2 divide-y-2 py-4 px-1 max-w-sm">
         {responses && responses.length > 0 ? (
           responses.map((response, idx) => (
             <div

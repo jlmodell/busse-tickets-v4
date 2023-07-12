@@ -23,6 +23,7 @@ import { redirect } from "next/navigation";
 import { putTicket } from "@/lib/server/putTicket";
 import { itAdmins, maintenanceAdmins } from "@/lib/constants/admins";
 import { sendEmail } from "@/lib/emailjs/send_email";
+import { sendDiscordNotification } from "@/lib/discordNotifications";
 import { baseURL } from "@/lib/constants/baseURL";
 
 export const TicketDetails = ({
@@ -123,6 +124,14 @@ export const TicketDetails = ({
           datetime: new Date().toLocaleString(),
         },
       });
+
+      await sendDiscordNotification(
+        `Updated ${ticket.type} ticket ${_id} for ${
+          ticket.submittedBy
+        } at ${new Date().toLocaleString()} @ ${baseURL}/tickets/${
+          ticket.type
+        }/${_id}`
+      );
     }
 
     if (type === "it") {
