@@ -9,7 +9,7 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       server: {
         host: process.env.NODEMAILER_HOST,
-        port: 2525,
+        port: 587,
         secure: false,
         auth: {
           user: process.env.NODEMAILER_USER,
