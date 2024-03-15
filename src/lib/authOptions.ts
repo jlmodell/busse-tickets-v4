@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
           pass: process.env.NODEMAILER_PASSWORD,
         },
       },
-      from: '"noreply" <it@busseweb.com>',
+      from: 'it@busseinc.com',
       maxAge: 24 * 60 * 60, // 24 hours
 
       normalizeIdentifier(identifier: string): string {
