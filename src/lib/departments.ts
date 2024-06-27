@@ -1,5 +1,6 @@
 export const DEPARTMENTS = [
   "general",
+  "customer service",
   "packaging",
   "manufacturing",
   "accounting",
