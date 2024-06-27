@@ -4,7 +4,7 @@ import { z } from "zod";
 const typeEnum = z.enum(["it", "maintenance"]);
 const departmentEnum = z.enum([
   "general",
-  "customer service"
+  "customer service",
   "packaging",
   "manufacturing",
   "accounting",
