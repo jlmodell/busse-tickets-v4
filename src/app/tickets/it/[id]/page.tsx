@@ -13,9 +13,13 @@ export default async function ITTicketDetailsPage({
 }: {
   params: { id: string };
 }) {
-  const user = await getCurrentUser();
+  let user = await getCurrentUser();
 
-  if (!user) redirect("/api/auth/signin");
+  // console.log(user);
+
+  if (!user) {
+    redirect("/api/auth/signin");
+  }
 
   const data = await getData(params.id);
   const parsedData = ticketSchema.parse(data);

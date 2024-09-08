@@ -18,13 +18,16 @@ import Link from "next/link";
 import DownloadIcon from "../files/download";
 import { nanoid } from "nanoid";
 import { getPresignedUrl } from "@/lib/server/getPresignedUrl";
-import { revalidatePath } from "next/cache";
+// import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { putTicket } from "@/lib/server/putTicket";
 import { itAdmins, maintenanceAdmins } from "@/lib/constants/admins";
 import { sendEmail } from "@/lib/emailjs/send_email";
 import { sendDiscordNotification } from "@/lib/discordNotifications";
 import { baseURL } from "@/lib/constants/baseURL";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions";
+import { type Session } from "@/types/user.type";
 
 export const TicketDetails = ({
   user,
@@ -35,6 +38,8 @@ export const TicketDetails = ({
   ticket: Ticket;
   type: "it" | "maintenance";
 }) => {
+  // console.log(user);
+
   const isAdmin =
     user.role === "admin"
       ? true
@@ -44,6 +49,16 @@ export const TicketDetails = ({
 
   async function sendTicket(formData: FormData) {
     "use server";
+
+    const session = (await getServerSession(authOptions)) as Session;
+
+    if (!session) {
+      // console.log("Session is null or expired");
+      redirect("/api/auth/signin");
+      return;
+    }
+
+    // console.log("Session is available:", session);
 
     async function uploadS3Files(submittedBy: string, files: File[]) {
       "use server";
@@ -134,11 +149,13 @@ export const TicketDetails = ({
       );
     }
 
+    // console.log(user);
+
     if (type === "it") {
-      revalidatePath(`/tickets/it/${_id}`);
+      // revalidatePath(`/tickets/it/${_id}`);
       redirect(`/tickets/it/${_id}`);
     } else if (type === "maintenance") {
-      revalidatePath(`/tickets/maintenance/${_id}`);
+      // revalidatePath(`/tickets/maintenance/${_id}`);
       redirect(`/tickets/maintenance/${_id}`);
     }
   }

@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
           pass: process.env.NODEMAILER_PASSWORD,
         },
       },
-      from: 'it@busseinc.com',
+      from: "it@busseinc.com",
       maxAge: 24 * 60 * 60, // 24 hours
 
       normalizeIdentifier(identifier: string): string {
@@ -52,6 +52,18 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
     updateAge: 7 * 24 * 60 * 60, // 7 days
+  },
+
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax", // or 'strict' if needed
+        path: "/", // ensures cookie is available across all routes
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
   },
 
   adapter: MongoDBAdapter(clientPromise),

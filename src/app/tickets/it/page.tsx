@@ -20,6 +20,8 @@ const getData = async (user: User, type: "it" | "maintenance") => {
 const TicketsITDashboard = async () => {
   const user = await getCurrentUser();
 
+  console.log(user);
+
   if (!user) redirect("/api/auth/signin?callbackUrl=/tickets/it");
 
   const data = (await getData(user, "it")) as Ticket[];
