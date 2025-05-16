@@ -1,6 +1,7 @@
 export const adminEmails = [
   "jmodell@busseinc.com",
   "jflores@busseinc.com",
+  "trojas@busseinc.com",
   "mansari@busseinc.com",
 ];
 export const maintenanceAdminEmails = [
@@ -17,6 +18,10 @@ export const itAdmins = [
   {
     email: "jflores@busseinc.com",
     name: "Juan Flores",
+  },
+  {
+    email: "trojas@busseinc.com",
+    name: "Theo Rojas",
   },
   // {
   //   email: "mansari@busseinc.com",
